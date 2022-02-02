@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  body {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkPV2m0YI4a9pNuSzv_BpkA9qIaHjY5ULkyA&usqp=CAU');
+      background-size: cover;
+  }
+  
+  .main {
+      width: 50vh;
+      margin: 100px auto;
+      background-color:cornsilk;
+      padding: 20px;
+      text-align: center;
+  }
+  .main > * {
+      margin-bottom: 20px;
+  }
+  
+  .input_sec {
+      width: 100%;
+      background-color: rgba(255,255,255,0.6);
+      border: none;
+      outline: none;
+      color: #582233;
+      font-size: 1.2rem;
+      height: 50px;
+      border-radius: 5px;
+      padding: 0 10px;
+      text-align: center;
+  }
+  
+  .input_sec:focus {
+      background-color: rgba(255,255,255);
+  }
+  
+  
+  .weather_sec {
+      display: none;
+      color: #582233;
+      padding: 20px;
+      line-height: 2rem;
+      border-radius: 10px;
+      background-color: rgba(255,255,255,0.6);
+      height: 50vh;
+  }
+  
+  .location-details {
+      font-weight: bold;
+  }
+  
+  .weather-status {
+      padding: 20px;
+  }
+  
+  .temp {
+      font-size: 40pt;
+      font-weight: 700;
+      margin: 20px 0;
+      text-shadow: 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  .min-max, .weather {
+      font-size: 12pt;
+      font-weight: 600;
+  }
+  </style>
+    <title>Weather App</title>
+</head>
+<body>
+    <div class="main">
+        <div class="searchInputBox">
+            <input type="text" id="input_sec" class="input_sec" placeholder="Enter City Name" autocomplete="off">
+        </div>
+
+        <div class="weather_sec">
+            <div class="location-details">
+                <div class="city" id="city">No data found</div>
+                <div class="date" id="date"></div>
+            </div>
+
+            <div class="weather-status">
+                <div class="temp" id="temp"></div>
+                <div class="min-max" id="min-max"></div>
+                <div class="weather" id="weather"></div>
+                <div id="img"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>const weatherApi = {
+      key: "bab281d79e5f1e9755a68d754cc313e7",
+      baseUrl: "https://api.openweathermap.org/data/2.5/weather", 
+  }
+  
+  const searchInputBox = document.getElementById('input_sec');
+  
+  // Event Listener Function on keypress
+  searchInputBox.addEventListener('keypress', (event) => {
+      
+      if(event.keyCode == 13) {
+          console.log(searchInputBox.value);
+          getWeatherReport(searchInputBox.value);
+          document.querySelector('.weather_sec').style.display = "block";
+      }
+  
+  });
+  
+  // Get Weather Report
+  function getWeatherReport(city) {
+      fetch(`${weatherApi.baseUrl}?q=${city}&appid=${weatherApi.key}&units=metric`)
+      .then(weather => {
+          return weather.json();
+      }).then(showWeatherReport);
+      setInterval('window.location.reload()', 3000);
+  }
+  
+  // Show Weather Report
+  function showWeatherReport(weather){
+      console.log(weather);
+  
+      let city = document.getElementById('city');
+      city.innerText = `${weather.name}, ${weather.sys.country}`;
+  
+      let temperature = document.getElementById('temp');
+      temperature.innerHTML = `${Math.round(weather.main.temp)}&deg;C`;
+  
+      let minMaxTemp = document.getElementById('min-max');
+      minMaxTemp.innerHTML = `${Math.floor(weather.main.temp_min)}&deg;C (min)/ ${Math.ceil(weather.main.temp_max)}&deg;C (max) `;
+  
+      let weatherType = document.getElementById('weather');
+      weatherType.innerText = `${weather.weather[0].main}`;
+  
+      let date = document.getElementById('date');
+      let todayDate = new Date();
+      date.innerText = date(todayDate);
+  
+      
+  }
+  
+  // Date manage
+  function date(today_date) {
+  
+      let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  
+      let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  
+      let year = today_date.getFullYear();
+      let month = months[today_date.getMonth()];
+      let date = today_date.getDate();
+      let day = days[date.getDay()];
+  
+      return `${date} ${month} (${day}), ${year}`;
+  }
+  
+  </script>
+</body>
+</html>
